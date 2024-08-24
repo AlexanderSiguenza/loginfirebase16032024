@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.util.PatternsCompat
 import com.google.firebase.auth.FirebaseAuth
+import androidx.appcompat.app.AlertDialog
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,7 +44,46 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showAlertDialog(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+
     private fun signIn(email: String, password: String) {
+
+        // Validar los campos
+        when {
+            email.isEmpty() || password.isEmpty() -> {
+                showAlertDialog("Error", "Por favor, complete todos los campos")
+                return
+            }
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                showAlertDialog("Error", "Por favor, ingrese una dirección de correo electrónico válida")
+                return
+            }
+            password.length < 6 -> {
+                showAlertDialog("Error", "La contraseña debe tener al menos 6 caracteres")
+                return
+            }
+        }
+
+        // Validar los campos
+        if (email.isEmpty() || password.isEmpty()) {
+            // Mostrar un mensaje si algún campo está vacío
+            Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()) {
+            // Mostrar un mensaje si el correo electrónico no es válido
+            Toast.makeText(this, "Por favor, ingrese una dirección de correo electrónico válida", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -55,6 +97,8 @@ class MainActivity : AppCompatActivity() {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
                     // Aquí puedes mostrar un mensaje de error al usuario, por ejemplo, Toast
+                    showAlertDialog("Error", "signInWithEmail:failure" + task.exception)
+
                 }
             }
     }

@@ -35,4 +35,13 @@
         android:layout_marginTop="16dp"
         android:text="Registrarse" />
 
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnRegister"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Iniciar sesión" />
+
 </RelativeLayout>
